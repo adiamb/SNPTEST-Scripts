@@ -30,8 +30,8 @@ def main(argv):
 	line_num = int(get_wc(impute))
 	lines_chunk = line_num/chunks
 	remainder = float(line_num) % float(chunks)
-	if chunks > line_num:
-		raise ValueError('CHUNKS GREATER THAN LINE_NUM')
+	if lines_chunk > line_num:
+		raise ValueError('CHUNK_LINES GREATER THAN TOTAL LINE_NUM')
 
 	processed_buf = 1
 	line_track = 1
