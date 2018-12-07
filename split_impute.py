@@ -64,8 +64,8 @@ def main():
 	for line in file_handle:
 		line_track += 1
 		#lines_for_chunk += 1
-		if line_track == 1000:
-			processed_buf += 1000
+		if line_track == 10000:
+			processed_buf += 10000
 			PercentProcessed ='{0:.1f}'.format((float(processed_buf)/float(line_num))*100)
 			print ' <<<<<  {}  PROCESSED LINES  {} % percent done from {} >>>>>'.format(processed_buf, PercentProcessed, impute)
 			line_track = 1
