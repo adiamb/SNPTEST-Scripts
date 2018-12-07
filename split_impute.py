@@ -61,26 +61,28 @@ def main():
 	else:
 		file_handle = open(impute, 'r')
 	
-	for n, line in enumerate(file_handle):
+	for line in file_handle:
 		line_track += 1
 		#lines_for_chunk += 1
 		if line_track == 1000:
 			processed_buf += 1000
-			print ' <<<<<  {}  PROCESSED LINES  {} % percent done from {} >>>>>'.format(processed_buf, (float(processed_buf)/float(line_num))*100, impute)
+			PercentProcessed ='{0:.1f}'.format((float(processed_buf)/float(line_num))*100)
+			print ' <<<<<  {}  PROCESSED LINES  {} % percent done from {} >>>>>'.format(processed_buf, PercentProcessed, impute)
 			line_track = 1
 		if lines_for_chunk == lines_chunk:
-			#outfile.close()
+			outfile.close()
 			chunk_track += 1
 			outfile_name_new=make_file(chunkid =chunkid, chunk_n =chunk_track)
 			outfile = open(outfile_name_new, 'w')
-			lines_for_chunk = 0
+			outfile.write(line)
+			lines_for_chunk = 1
 		else:
 			outfile.write(line)
 			lines_for_chunk += 1
-	#outfile.close()
+			
+			
+	outfile.close()
 	file_handle.close()
 	
-#		if chunk_track == chunks/2:
-#			print '<<<<<<< PROGRESS - 50% DONE >>>>>>>'
 
 if __name__ == "__main__": main()
