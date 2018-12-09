@@ -62,7 +62,7 @@ def ParseSample(SampleFile, Dx):
 						GetDx = Dx.get(MakeKey)
 						MakeValue = ' '.join(LineParse[2:5])+' '+GetDx
 					else:
-						MakeValue = ' '.join(LineParse[2:5])+str(' NA'*11)
+						MakeValue = ' '.join(LineParse[2:5])+str(' NA'*12)
 
 					mds[MakeKey] = MakeValue
 	print mds
