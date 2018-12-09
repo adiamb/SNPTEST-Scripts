@@ -60,9 +60,9 @@ def ParseSample(SampleFile, Dx):
 				else:
 					if MakeKey in Dx:
 						GetDx = Dx.get(MakeKey)
-						MakeValue = ' '.join(LineParse[2:5])+' '+GetDx
+						MakeValue = ' '.join(LineParse[2:6])+' '+GetDx
 					else:
-						MakeValue = ' '.join(LineParse[2:5])+str(' NA'*12)
+						MakeValue = ' '.join(LineParse[2:6])+str(' NA'*11)
 
 					mds[MakeKey] = MakeValue
 	print mds
