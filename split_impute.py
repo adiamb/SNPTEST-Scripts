@@ -60,13 +60,16 @@ def main():
 
 	outfile_name = make_file(chunkid, chunk_track)
 	
-	if 'gz' in impute and gzipped == 1:
+	if gzipped == 1:
 		print 'REQUESTED OUTPUT IN GZIP FORMAT'
-		file_handle = gzip.open(impute, 'rb')
 		outfile = gzip.open(outfile_name+'.gz', 'w')
 	else:
-		file_handle = open(impute, 'r')
 		outfile = open(outfile_name, 'w')
+
+	if '.gz' in impute:
+		file_handle = gzip.open(impute, 'rb')
+	else:
+		file_handle = open(impute, 'r')
 	
 	for line in file_handle:
 		line_track += 1
@@ -80,7 +83,7 @@ def main():
 			outfile.close()
 			chunk_track += 1
 			outfile_name_new=make_file(chunkid =chunkid, chunk_n =chunk_track)
-			if 'gz' in impute and gzipped == 1:
+			if gzipped == 1:
 				outfile = gzip.open(outfile_name_new+'.gz', 'w')
 			else:
 				outfile = open(outfile_name_new, 'w')
