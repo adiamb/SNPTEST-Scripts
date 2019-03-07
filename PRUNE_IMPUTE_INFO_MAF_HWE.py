@@ -33,9 +33,6 @@ def ProcessStat(Stat, mafthreshold, hwethreshold, infothreshold):
 				if not False in hwe and info >= infothreshold and all_maf >= mafthreshold:
 					GoodSnps += 1
 					GoodIndex.append(index)
-		# elif n == 10:
-		# 	Header = line.strip()
-		# 	Header = {i:j for i,j in enumerate(Header.split(' '))}
 	StatFile.close()
 	prop='{0:.1f}'.format((float(GoodSnps)/float(n))*100)
 	logging.info('FOUND QCED SNPS {} OUT OF {} IN {} FILE {} % PERCENT '.format(GoodSnps, n,  Stat, prop))
