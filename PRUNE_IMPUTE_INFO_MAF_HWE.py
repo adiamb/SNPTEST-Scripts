@@ -74,7 +74,7 @@ def ProcessGenFile(GenFile, Stat, OutFile,Dosage=True):
 			logging.info('PROCESSED {} MILLION VARIANTS'.format(LineBuffer))
 		if IndexLine in Indices: # if the line is present in the indices then it is a good snp having passed all the thresholds
 			GenLine = line.strip().split(' ')
-			RsidHeader = ' '.join(GenLine[:6])
+			RsidHeader = GenLine[2]#' '.join(GenLine[:6])
 			if Dosage is True:
 				Genos = ConvertGenDos(GenLine[6:])
 				ParsedLine = RsidHeader +' '+Genos.strip()
