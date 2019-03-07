@@ -89,7 +89,6 @@ def ProcessGenFile(GenFile, Stat, OutFile,Dosage=True):
 
 def main():
 	import argparse
-
 	parser = argparse.ArgumentParser(description='A script that cleans the  ')
 	parser.add_argument('-StatFile', help='A summary stat file output from snptest summary stat', required=True)
 	parser.add_argument('-Genotype', help='The Gen file to be cleaned', required=True)
