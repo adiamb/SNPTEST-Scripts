@@ -33,6 +33,9 @@ def ProcessStat(Stat, mafthreshold, hwethreshold, infothreshold):
 				if not False in hwe and info >= infothreshold and all_maf >= mafthreshold:
 					GoodSnps += 1
 					GoodIndex.append(index)
+		# elif n == 10:
+		# 	Header = line.strip()
+		# 	Header = {i:j for i,j in enumerate(Header.split(' '))}
 	StatFile.close()
 	prop='{0:.1f}'.format((float(GoodSnps)/float(n))*100)
 	logging.info('FOUND QCED SNPS {} OUT OF {} IN {} FILE {} % PERCENT '.format(GoodSnps, n,  Stat, prop))
@@ -81,30 +84,35 @@ def ProcessGenFile(GenFile, Stat, OutFile,Dosage=True):
 
 	OutGen.close()
 	GenIn.close()
+	logging.info('PROCESSED IN TOTAL {} FROM {} AND DUMPED THE VARIANTS INTO {}'.format(IndexLine, GenLine, OutFile))
 
 
 
 def main():
 	import argparse
-	parser = argparse.ArgumentParser(description='A script that cleans the  ')
+	parser = argparse.ArgumentParser(description='A script that cleans the  oxforf gen file')
 	parser.add_argument('-StatFile', help='A summary stat file output from snptest summary stat', required=True)
 	parser.add_argument('-Genotype', help='The Gen file to be cleaned', required=True)
 	parser.add_argument('-Out', help='Name with path to which the cleaned Genos should be written', required=True)
 	parser.add_argument('-Log', help='Name with path to which the log should be written', required=False)
-
+	parser.add_argument('-Convert', choices=['True', 'False'], help='Should the imputed best guess genotypes be converted to probabilities ranging from 0 to 2', required=False)
 	args=parser.parse_args()
 	GenFile = args.Genotype
 	Stat = args.StatFile
 	OutFile = args.Out
 	Log = args.Log
+	Dosage = args.Convert
 	if Log is not None:
 		logging.basicConfig(filename=Log,level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 		logging.info('ARGUMENTS GIVEN {}'.format(args))
 		logging.info('STARTED PROCESSING {} '.format(Stat))
 	else:
 		print 'LOGGING HAS BEEN TURNED OFF'
-
-	ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=True)
+	if Dosage is not None:
+		logging.info('CONVERT TO DOSAGES IS {} '.format(Dosage))
+		ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=Dosage)
+	else:
+		ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=True)
 
 
 if __name__ == '__main__':main()
