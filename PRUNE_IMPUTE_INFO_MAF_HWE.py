@@ -57,11 +57,12 @@ def ConvertGenDos(Genos):
 	return Dosages
 
 
-def ProcessGenFile(GenFile, Stat, OutFile,Dosage=True):
+def ProcessGenFile(GenFile, Stat, OutFile,Dosage, Exclude):
 	GenIn = GzipFileHandler(GenFile)
 	OutGen = GzipFileHandler(OutFile, Read=False)
 	logging.info('READING THE GENOTYPE FILE {}'.format(GenFile))
-	Indices=ProcessStat(Stat=Stat,mafthreshold=0.01,hwethreshold=5e-6,infothreshold=0.7)
+	if Exclude == 1:
+		Indices=ProcessStat(Stat=Stat,mafthreshold=0.01,hwethreshold=5e-6,infothreshold=0.7)
 	Lines = 0
 	IndexLine =0
 	LineBuffer =0
@@ -72,19 +73,30 @@ def ProcessGenFile(GenFile, Stat, OutFile,Dosage=True):
 			LineBuffer += 1
 			Lines =0
 			logging.info('PROCESSED {} MILLION VARIANTS'.format(LineBuffer))
-		if IndexLine in Indices: # if the line is present in the indices then it is a good snp having passed all the thresholds
+		if Exclude == 1:
+			if IndexLine in Indices: # if the line is present in the indices then it is a good snp having passed all the thresholds
+				GenLine = line.strip().split(' ')
+				RsidHeader = GenLine[2]#' '.join(GenLine[:6])
+				if Dosage == 1:
+					Genos = ConvertGenDos(GenLine[6:])
+					ParsedLine = RsidHeader +' '+Genos.strip()
+					OutGen.write(ParsedLine+'\n')
+				else:
+					OutGen.write(line)
+		else:
 			GenLine = line.strip().split(' ')
 			RsidHeader = GenLine[2]#' '.join(GenLine[:6])
-			if Dosage is True:
+			if Dosage == 1:
 				Genos = ConvertGenDos(GenLine[6:])
 				ParsedLine = RsidHeader +' '+Genos.strip()
 				OutGen.write(ParsedLine+'\n')
 			else:
 				OutGen.write(line)
 
+
 	OutGen.close()
 	GenIn.close()
-	logging.info('PROCESSED IN TOTAL {} FROM {} AND DUMPED THE VARIANTS INTO {}'.format(IndexLine, GenLine, OutFile))
+	logging.info('PROCESSED IN TOTAL {} FROM {} AND DUMPED THE VARIANTS INTO {}'.format(IndexLine, GenFile, OutFile))
 
 
 
@@ -95,13 +107,15 @@ def main():
 	parser.add_argument('-Genotype', help='The Gen file to be cleaned', required=True)
 	parser.add_argument('-Out', help='Name with path to which the cleaned Genos should be written', required=True)
 	parser.add_argument('-Log', help='Name with path to which the log should be written', required=False)
-	parser.add_argument('-Convert', choices=['True', 'False'], help='Should the imputed best guess genotypes be converted to probabilities ranging from 0 to 2', required=False)
+	parser.add_argument('-Convert', choices=['1', '0'], help='Should the imputed best guess genotypes be converted to probabilities ranging from 0 to 2', required=False)
+	parser.add_argument('-Exclude', choices=['1', '0'], help='Should the variants be excluded', required=False)
 	args=parser.parse_args()
 	GenFile = args.Genotype
 	Stat = args.StatFile
 	OutFile = args.Out
 	Log = args.Log
 	Dosage = args.Convert
+	Exclude = args.Exclude
 	if Log is not None:
 		logging.basicConfig(filename=Log,level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 		logging.info('ARGUMENTS GIVEN {}'.format(args))
@@ -110,9 +124,17 @@ def main():
 		print 'LOGGING HAS BEEN TURNED OFF'
 	if Dosage is not None:
 		logging.info('CONVERT TO DOSAGES IS {} '.format(Dosage))
-		ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=Dosage)
+		Dosage = int(Dosage)
 	else:
-		ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=True)
+		Dosage =1
+	
+	if Exclude is not None:
+		logging.info('EXCLUSION OF VARIANTS IS TURNED {} '.format(Exclude))
+		Exclude = int(Exclude)
+	else:
+		Exclude = 1
+		
+	ProcessGenFile(GenFile=GenFile, Stat=Stat,OutFile=OutFile,Dosage=Dosage, Exclude=Exclude)
 
 
 if __name__ == '__main__':main()
